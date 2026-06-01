@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAPPY - ระบบจองคิว</title>
+    <title>TAPPY | ระบบสมาชิกและจองคิว</title>
     
-    <!-- ฟอนต์ Sarabun -->
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -19,179 +16,162 @@
             theme: {
                 extend: { 
                     fontFamily: { sans: ['Sarabun', 'sans-serif'] }, 
-                    colors: { primary: '#1e293b', line: '#00C300' } 
+                    colors: { primary: '#0f172a', line: '#06c755' } 
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #f8fafc; font-size: 15px; }
-        .hidden-section { display: none; }
-        .rule-pass { color: #16a34a; }
-        .rule-fail { color: #ef4444; }
-        /* เทคนิคลบพื้นหลังสีขาวของภาพโลโก้ */
+        body { background: #f1f5f9; font-family: 'Sarabun', sans-serif; font-size: 15px; }
+        .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
         .transparent-logo { mix-blend-mode: multiply; }
-        /* ซ่อน Scrollbar เพื่อความสะอาดตาบนมือถือ */
+        .hidden-section { display: none; }
+        .rule-pass { color: #059669; }
+        .rule-fail { color: #dc2626; }
         ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="text-gray-800 antialiased flex items-center justify-center min-h-screen p-3 relative">
+<body class="flex items-center justify-center min-h-screen p-4 relative">
 
-    <!-- ==================== CUSTOM POPUP MODAL ==================== -->
     <div id="customPopup" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-black bg-opacity-50 backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-xl shadow-2xl p-5 max-w-[300px] w-full mx-4 transform transition-all scale-95 opacity-0 text-center" id="popupContent">
-            <div id="popupIcon" class="mb-2 text-4xl"></div>
-            <h3 id="popupTitle" class="text-xl font-bold mb-1"></h3>
-            <p id="popupMessage" class="text-gray-600 mb-4 text-sm"></p>
-            <button onclick="window.closePopup()" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-gray-800 transition font-medium text-sm shadow-md">ตกลง</button>
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-[320px] w-full mx-4 transform transition-all scale-95 opacity-0 text-center" id="popupContent">
+            <div id="popupIcon" class="mb-3 text-5xl"></div>
+            <h3 id="popupTitle" class="text-xl font-bold mb-2"></h3>
+            <p id="popupMessage" class="text-gray-600 mb-6 text-sm"></p>
+            <button onclick="window.closePopup()" class="w-full bg-primary text-white py-2.5 rounded-xl hover:bg-gray-800 transition font-medium shadow-md">ตกลง</button>
         </div>
     </div>
 
-    <!-- Container (ปรับขนาดเล็กลงสำหรับมือถือ) -->
-    <div class="w-full max-w-[360px] bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 my-4">
+    <div class="w-full max-w-[420px] glass-card rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden my-4">
         
-        <!-- Logo Section -->
-        <div class="pt-6 pb-2 flex justify-center">
-            <img src="https://img2.pic.in.th/18826.png" alt="Logo" class="h-14 object-contain transparent-logo">
+        <div class="pt-10 pb-4 flex flex-col items-center">
+            <img src="https://img1.pic.in.th/images/IMG_0018.png" alt="Logo" class="h-20 w-auto object-contain transparent-logo mb-2">
+            <h1 class="text-xl font-semibold text-primary">ระบบสมาชิก TAPPY</h1>
+            <p class="text-gray-500 text-sm">กรุณาเข้าสู่ระบบเพื่อดำเนินการ</p>
         </div>
 
-        <!-- ==================== LOGIN PAGE ==================== -->
-        <div id="loginPage" class="p-5 pt-0">
-            <h2 class="text-xl font-bold text-center mb-4 text-primary">เข้าสู่ระบบ</h2>
-            <form id="loginForm" onsubmit="window.handleLogin(event)">
-                <div class="mb-3">
-                    <label class="block text-gray-600 mb-1 text-sm">อีเมลผู้ใช้</label>
-                    <input type="email" id="loginEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm transition">
+        <div id="loginPage" class="px-8 pb-10">
+            <form id="loginForm" onsubmit="window.handleLogin(event)" class="space-y-4">
+                <div>
+                    <input type="email" id="loginEmail" placeholder="อีเมล" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition duration-200">
                 </div>
-                <div class="mb-4">
-                    <label class="block text-gray-600 mb-1 text-sm">รหัสผ่าน</label>
-                    <input type="password" id="loginPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm transition">
+                <div>
+                    <input type="password" id="loginPassword" placeholder="รหัสผ่าน" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition duration-200">
                 </div>
-                <button type="submit" id="btnLogin" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-gray-800 transition font-medium text-sm shadow-md">เข้าสู่ระบบ</button>
+                <button type="submit" id="btnLogin" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-black transition duration-200 shadow-md">เข้าสู่ระบบ</button>
             </form>
 
-            <div class="my-4 flex items-center">
-                <hr class="flex-grow border-gray-200">
-                <span class="mx-3 text-gray-400 text-xs">หรือ</span>
-                <hr class="flex-grow border-gray-200">
+            <div class="my-6 flex items-center text-xs text-gray-400 uppercase tracking-widest">
+                <hr class="flex-grow border-gray-200"><span class="mx-3">หรือ</span><hr class="flex-grow border-gray-200">
             </div>
 
-            <div class="space-y-2">
-                <button type="button" onclick="window.handleSocialAuth('google')" class="w-full flex items-center justify-center border border-gray-300 py-2 rounded-lg hover:bg-gray-50 transition shadow-sm text-sm font-medium">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-4 w-4 mr-2" alt="Google"> เข้าใช้งานด้วย Google
+            <div class="space-y-3">
+                <button type="button" onclick="window.handleSocialAuth('google')" class="w-full flex items-center justify-center border border-gray-200 py-3 rounded-xl hover:bg-gray-50 transition duration-200 text-sm font-medium">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-5 w-5 mr-3"> เข้าใช้งานด้วย Google
                 </button>
-                <button type="button" onclick="window.handleSocialAuth('line')" class="w-full flex items-center justify-center bg-line text-white py-2 rounded-lg hover:bg-[#00a300] transition shadow-sm text-sm font-medium">
-                    <i class="fa-brands fa-line text-lg mr-2"></i> เข้าใช้งานด้วย LINE
+                <button type="button" onclick="window.handleSocialAuth('line')" class="w-full flex items-center justify-center bg-line text-white py-3 rounded-xl hover:bg-green-600 transition duration-200 text-sm font-medium shadow-sm">
+                    <i class="fa-brands fa-line text-xl mr-3"></i> เข้าใช้งานด้วย LINE
                 </button>
             </div>
 
-            <p class="mt-5 text-center text-gray-600 text-sm">
-                ยังไม่มีบัญชี? | <a href="#" onclick="window.togglePage('registerPage')" class="text-primary font-bold hover:underline">สมัครเลย</a>
+            <p class="mt-8 text-center text-sm text-gray-600">
+                ยังไม่มีบัญชี? <a href="#" onclick="window.togglePage('registerPage')" class="text-primary font-bold hover:underline">สมัครสมาชิก</a>
             </p>
         </div>
 
-        <!-- ==================== REGISTER PAGE ==================== -->
-        <div id="registerPage" class="hidden-section p-5 pt-0">
-            <h2 class="text-xl font-bold text-center mb-4 text-primary">สร้างบัญชีใหม่</h2>
-            <form id="registerForm" onsubmit="window.handleRegister(event)">
+        <div id="registerPage" class="hidden-section px-8 pb-10">
+            <hr class="mb-6 border-gray-200">
+            <h2 class="text-lg font-bold text-center mb-4 text-primary">สร้างบัญชีใหม่</h2>
+            
+            <form id="registerForm" onsubmit="window.handleRegister(event)" class="space-y-4">
                 
-                <div class="mb-3">
-                    <label class="block text-gray-600 mb-1 text-sm">ชื่อ - นามสกุล</label>
-                    <input type="text" id="regName" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm">
-                </div>
-
-                <div class="mb-3">
-                    <label class="block text-gray-600 mb-1 text-sm">เบอร์โทรศัพท์ (10 หลัก)</label>
-                    <input type="tel" id="regPhone" pattern="[0-9]{10}" maxlength="10" placeholder="08xxxxxxxx" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm">
-                </div>
-
-                <div class="mb-3">
-                    <label class="block text-gray-600 mb-1 text-sm">อีเมล</label>
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6">
+                    <label class="block text-primary mb-2 text-sm font-semibold text-center">ทางลัด: ผูกบัญชีโซเชียลเพื่อสมัครไวขึ้น</label>
                     <div class="flex space-x-2">
-                        <input type="email" id="emailInput" required class="flex-grow px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm">
-                        <button type="button" onclick="window.requestOTP()" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition text-xs font-medium whitespace-nowrap">รับรหัส</button>
-                    </div>
-                    <div id="otpSection" class="hidden mt-2">
-                        <input type="text" id="otpInput" placeholder="รหัส OTP 6 หลัก" class="w-full px-3 py-2 border border-green-300 bg-green-50 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-sm">
+                        <button type="button" id="btnLinkGoogle" onclick="window.linkSocialAuth('google')" class="flex-1 flex items-center justify-center border border-gray-300 bg-white py-2 rounded-lg hover:bg-gray-50 transition text-gray-600 shadow-sm text-sm font-medium">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-4 w-4 mr-2"> ผูก Google
+                        </button>
+                        <button type="button" id="btnLinkLine" onclick="window.linkSocialAuth('line')" class="flex-1 flex items-center justify-center bg-line text-white py-2 rounded-lg hover:bg-[#00a300] transition shadow-sm text-sm font-medium">
+                            <i class="fa-brands fa-line mr-2 text-base"></i> ผูก LINE
+                        </button>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="block text-gray-600 mb-1 text-sm">ชื่อผู้ใช้</label>
-                    <input type="text" id="regUsername" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm">
+                <div>
+                    <input type="text" id="regName" placeholder="ชื่อ - นามสกุล" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none">
                 </div>
 
-                <div class="mb-3">
-                    <label class="block text-gray-600 mb-1 text-sm">สร้างรหัสผ่าน</label>
-                    <input type="password" id="regPassword" onkeyup="window.validatePassword()" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none mb-2 text-sm">
-                    <div class="text-xs bg-gray-50 p-2.5 rounded-lg border border-gray-200">
-                        <ul class="space-y-0.5 leading-tight">
-                            <li id="rule-length" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> อย่างน้อย 12 ตัวอักษร</li>
-                            <li id="rule-upper" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> ตัวพิมพ์ใหญ่ (A-Z) 1 ตัว</li>
-                            <li id="rule-lower" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> ตัวพิมพ์เล็ก (a-z) 1 ตัว</li>
+                <div>
+                    <input type="tel" id="regPhone" pattern="[0-9]{10}" maxlength="10" placeholder="เบอร์โทรศัพท์ (10 หลัก)" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                </div>
+
+                <div class="flex space-x-2">
+                    <input type="email" id="emailInput" placeholder="อีเมล" required class="flex-grow px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                    <button type="button" onclick="window.requestOTP()" class="px-3 py-2.5 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition text-sm font-medium whitespace-nowrap">รับ OTP</button>
+                </div>
+                <div id="otpSection" class="hidden">
+                    <input type="text" id="otpInput" placeholder="รหัส OTP 6 หลัก" class="w-full px-4 py-2.5 border border-green-300 bg-green-50 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm">
+                </div>
+
+                <div>
+                    <input type="text" id="regUsername" placeholder="ชื่อผู้ใช้ (Username)" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                </div>
+
+                <div>
+                    <input type="password" id="regPassword" placeholder="สร้างรหัสผ่าน" onkeyup="window.validatePassword()" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                    <div class="text-xs bg-gray-50 p-3 mt-2 rounded-xl border border-gray-200 text-gray-500">
+                        <ul class="space-y-1 leading-tight">
+                            <li id="rule-length" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> 12 ตัวอักษรขึ้นไป</li>
+                            <li id="rule-upper" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> พิมพ์ใหญ่ (A-Z) 1 ตัว</li>
+                            <li id="rule-lower" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> พิมพ์เล็ก (a-z) 1 ตัว</li>
                             <li id="rule-number" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> ตัวเลข (0-9) 1 ตัว</li>
-                            <li id="rule-special" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> อักขระพิเศษ (!@#$%^&*) 1 ตัว</li>
+                            <li id="rule-special" class="rule-fail"><i class="fa-solid fa-xmark w-3 text-center"></i> อักขระพิเศษ 1 ตัว</li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="block text-gray-600 mb-1 text-sm">ยืนยันรหัสผ่าน</label>
-                    <input type="password" id="regConfirmPassword" onkeyup="window.checkPasswordMatch()" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm">
-                    <p id="passwordMatchError" class="text-red-500 text-xs mt-1 hidden">รหัสผ่านไม่ตรงกัน</p>
+                <div>
+                    <input type="password" id="regConfirmPassword" placeholder="ยืนยันรหัสผ่าน" onkeyup="window.checkPasswordMatch()" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none">
+                    <p id="passwordMatchError" class="text-red-500 text-xs mt-1 ml-1 hidden">รหัสผ่านไม่ตรงกัน</p>
                 </div>
 
-                <div class="mb-4">
-                    <label class="block text-gray-600 mb-1 text-sm">รหัสความปลอดภัย</label>
+                <div>
+                    <label class="block text-gray-500 mb-1 text-xs ml-1">รหัสความปลอดภัย</label>
                     <div class="flex items-center space-x-2 mb-2">
-                        <div id="captchaBox" class="bg-gray-100 border border-gray-300 font-mono text-xl tracking-[0.2em] px-3 py-1.5 rounded-lg font-bold text-gray-700 select-none w-28 text-center"></div>
-                        <button type="button" onclick="window.generateCaptcha()" class="p-2 text-gray-500 hover:text-primary transition bg-gray-50 border border-gray-200 rounded-lg" title="เปลี่ยนรหัส"><i class="fa-solid fa-rotate-right"></i></button>
-                        <button type="button" onclick="window.speakCaptcha()" class="p-2 text-gray-500 hover:text-primary transition bg-gray-50 border border-gray-200 rounded-lg" title="อ่านออกเสียง"><i class="fa-solid fa-volume-high"></i></button>
+                        <div id="captchaBox" class="bg-gray-100 border border-gray-200 font-mono text-xl tracking-[0.2em] px-3 py-2 rounded-xl font-bold text-gray-600 select-none w-32 text-center"></div>
+                        <button type="button" onclick="window.generateCaptcha()" class="p-2.5 text-gray-400 hover:text-primary transition bg-gray-50 border border-gray-200 rounded-xl"><i class="fa-solid fa-rotate-right"></i></button>
+                        <button type="button" onclick="window.speakCaptcha()" class="p-2.5 text-gray-400 hover:text-primary transition bg-gray-50 border border-gray-200 rounded-xl"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
-                    <input type="text" id="captchaInput" placeholder="ตัวเลขที่เห็น" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary outline-none text-sm">
+                    <input type="text" id="captchaInput" placeholder="กรอกตัวเลขด้านบน" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none">
                 </div>
 
-                <!-- เชื่อมต่อ Social Real Integration -->
-                <div class="mb-4 border-t border-gray-200 pt-3">
-                    <label class="block text-gray-600 mb-2 text-sm font-medium">ผูกบัญชีโซเชียล (ตัวเลือก)</label>
-                    <div class="flex space-x-2">
-                        <button type="button" onclick="window.handleSocialAuth('google')" class="flex-1 flex items-center justify-center border border-gray-300 py-1.5 rounded-lg hover:bg-gray-50 transition text-gray-600 shadow-sm text-sm">
-                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-4 w-4 mr-1"> ผูก Google
-                        </button>
-                        <button type="button" onclick="window.handleSocialAuth('line')" class="flex-1 flex items-center justify-center bg-line text-white py-1.5 rounded-lg hover:bg-[#00a300] transition shadow-sm text-sm">
-                            <i class="fa-brands fa-line mr-1 text-base"></i> ผูก LINE
-                        </button>
-                    </div>
-                </div>
-
-                <div class="mb-4 border-t border-gray-200 pt-3">
+                <div class="pt-2">
                     <label class="flex items-start cursor-pointer">
-                        <input type="checkbox" required class="mt-1 mr-2 w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary">
-                        <span class="text-xs text-gray-500 leading-tight">
-                            ฉันยินยอมให้ TAPPY เก็บรวบรวมและประมวลผลข้อมูลตามนโยบายความเป็นส่วนตัว
+                        <input type="checkbox" required class="mt-1 mr-2 w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
+                        <span class="text-xs text-gray-400 leading-tight">
+                            ฉันยินยอมให้ TAPPY เก็บรวบรวมและประมวลผลข้อมูลส่วนบุคคล
                         </span>
                     </label>
                 </div>
 
-                <button type="submit" id="btnRegister" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-gray-800 transition font-bold text-sm shadow-md">สมัครสมาชิก</button>
+                <button type="submit" id="btnRegister" class="w-full bg-primary text-white py-3 rounded-xl hover:bg-black transition font-bold shadow-md mt-2">สมัครสมาชิก</button>
                 
-                <p class="mt-4 text-center text-gray-600 text-sm">
-                    <a href="#" onclick="window.togglePage('loginPage')" class="hover:underline font-medium"><i class="fa-solid fa-arrow-left mr-1"></i> กลับไปหน้าล็อกอิน</a>
+                <p class="mt-4 text-center text-sm text-gray-500">
+                    <a href="#" onclick="window.togglePage('loginPage')" class="hover:underline font-medium"><i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ</a>
                 </p>
             </form>
         </div>
     </div>
 
-    <!-- FIREBASE & LOGIC SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { 
             getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-            signInWithRedirect, getRedirectResult, GoogleAuthProvider, OAuthProvider
+            signInWithRedirect, getRedirectResult, GoogleAuthProvider, OAuthProvider,
+            updatePassword
         } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // ================= FIREBASE CONFIG =================
         const firebaseConfig = {
             apiKey: "AIzaSyAzPmv7OVKbm2jBvBZKr16gRBjmplB9rEU",
             authDomain: "tappy-boking.firebaseapp.com",
@@ -207,7 +187,6 @@
 
         // ================= CUSTOM POPUP =================
         let popupCallback = null;
-
         window.showPopup = (title, message, type = 'info', callback = null) => {
             const popup = document.getElementById('customPopup');
             const content = document.getElementById('popupContent');
@@ -244,10 +223,7 @@
             content.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
                 popup.classList.add('hidden');
-                if (popupCallback) {
-                    popupCallback();
-                    popupCallback = null;
-                }
+                if (popupCallback) { popupCallback(); popupCallback = null; }
             }, 200);
         };
 
@@ -278,9 +254,9 @@
             rules.forEach(rule => {
                 const el = document.getElementById(rule.id);
                 if (rule.regex.test(pwd)) {
-                    el.className = 'rule-pass'; el.innerHTML = `<i class="fa-solid fa-check w-3 text-center"></i> ${el.innerText}`;
+                    el.className = 'rule-pass'; el.innerHTML = `<i class="fa-solid fa-check w-3 text-center"></i> ${el.innerText.trim().replace(' ', ' ')}`;
                 } else {
-                    el.className = 'rule-fail'; el.innerHTML = `<i class="fa-solid fa-xmark w-3 text-center"></i> ${el.innerText}`;
+                    el.className = 'rule-fail'; el.innerHTML = `<i class="fa-solid fa-xmark w-3 text-center"></i> ${el.innerText.trim().replace(' ', ' ')}`;
                 }
             });
             window.checkPasswordMatch();
@@ -308,49 +284,60 @@
             }
         }
 
-        // ================= REAL SOCIAL AUTH LOGIC (Google + LINE) =================
+        // ================= REAL SOCIAL AUTH & LINKING LOGIC =================
         
+        // ตรวจสอบสถานะการเด้งกลับมา (Redirect) จากการผูก/ล็อกอิน โซเชียล
         getRedirectResult(auth).then(async (result) => {
             if (result !== null) {
                 const user = result.user;
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
                 
-                // ตรวจสอบและบันทึกข้อมูลหากเป็นผู้ใช้ใหม่
                 if (!userSnap.exists()) {
-                    await setDoc(userRef, {
-                        fullName: user.displayName || "ผู้ใช้โซเชียล",
-                        email: user.email || "",
-                        phone: "",
-                        username: user.email ? user.email.split('@')[0] : "user_" + user.uid.substring(0,5),
-                        provider: result.providerId || "social",
-                        createdAt: new Date()
+                    // 1. กรณีมาจากหน้าสมัครสมาชิก (ผูกบัญชีใหม่)
+                    window.togglePage('registerPage'); // เด้งกลับมาหน้าสมัครสมาชิกให้อัตโนมัติ
+                    
+                    // ดึงข้อมูลมาใส่ช่องให้อัตโนมัติ
+                    if(user.email) document.getElementById('emailInput').value = user.email;
+                    if(user.displayName) document.getElementById('regName').value = user.displayName;
+                    
+                    // เปลี่ยนปุ่มโซเชียลเป็น "ผูกสำเร็จ"
+                    if(result.providerId === 'google.com') {
+                        const btn = document.getElementById('btnLinkGoogle');
+                        btn.className = "flex-1 flex items-center justify-center bg-green-50 border border-green-500 text-green-600 py-2 rounded-lg text-sm font-medium shadow-sm cursor-not-allowed";
+                        btn.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> ผูก Google สำเร็จ';
+                    } else if(result.providerId === 'oidc.line') {
+                        const btn = document.getElementById('btnLinkLine');
+                        btn.className = "flex-1 flex items-center justify-center bg-green-50 border border-green-500 text-green-600 py-2 rounded-lg text-sm font-medium shadow-sm cursor-not-allowed";
+                        btn.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> ผูก LINE สำเร็จ';
+                    }
+                    
+                    window.showPopup("ผูกบัญชีสำเร็จ", "กรุณาตั้งรหัสผ่านและกรอกข้อมูลที่เหลือ เพื่อทำการสมัครสมาชิกให้เสร็จสิ้น", "success");
+                } else {
+                    // 2. กรณีผู้ใช้เก่ากดล็อกอินหน้าแรก -> เข้าสู่ระบบสำเร็จ พาไป Dashboard
+                    window.showPopup("สำเร็จ", `ยินดีต้อนรับ ${user.displayName || 'เข้าสู่ระบบ'}`, "success", () => {
+                        window.location.href = 'dashboard.html';
                     });
                 }
-                
-                window.showPopup("สำเร็จ", `ยินดีต้อนรับ ${user.displayName || 'เข้าสู่ระบบ'}`, "success", () => {
-                    window.location.href = 'dashboard.html';
-                });
             }
         }).catch((error) => {
             console.error("Auth Error:", error);
             window.showPopup("ข้อผิดพลาด", "การตรวจสอบสิทธิ์ล้มเหลว", "error");
         });
 
-        // ฟังก์ชันล็อกอิน/ผูกบัญชีด้วย Google และ LINE (ของจริง)
+        // ฟังก์ชันเข้าสู่ระบบจากหน้าแรก (Google / LINE)
         window.handleSocialAuth = (providerName) => {
-            let provider;
-            if (providerName === 'google') {
-                provider = new GoogleAuthProvider();
-            } else if (providerName === 'line') {
-                // เชื่อมต่อ LINE ผ่าน Firebase OIDC (ต้องตั้งค่า oidc.line ใน Firebase Console)
-                provider = new OAuthProvider('oidc.line');
-            }
-            // ใช้ Redirect เพื่อให้รองรับมือถือและ LINE LIFF 100% ไม่มีบั๊กเด้งออก
+            let provider = providerName === 'google' ? new GoogleAuthProvider() : new OAuthProvider('oidc.line');
             signInWithRedirect(auth, provider);
         }
 
-        // ================= EMAIL AUTH LOGIC =================
+        // ฟังก์ชัน ผูกบัญชี จากหน้าสมัครสมาชิก
+        window.linkSocialAuth = (providerName) => {
+            let provider = providerName === 'google' ? new GoogleAuthProvider() : new OAuthProvider('oidc.line');
+            signInWithRedirect(auth, provider); // พาไปยืนยันตัวตน และจะเด้งกลับมาหน้าสมัครสมาชิกผ่าน getRedirectResult ด้านบน
+        }
+
+        // ================= REGISTRATION & LOGIN LOGIC =================
         window.handleRegister = async (e) => {
             e.preventDefault();
             
@@ -369,19 +356,30 @@
             const username = document.getElementById('regUsername').value;
             const btn = document.getElementById('btnRegister');
             
-            btn.innerText = "กำลังสร้าง...";
+            btn.innerText = "กำลังสร้างบัญชี...";
             btn.disabled = true;
 
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
+                let uid = "";
+                // ตรวจสอบว่าผู้ใช้ทำการ 'ผูกบัญชีโซเชียล' มาก่อนกดปุ่มนี้หรือไม่
+                if (auth.currentUser) {
+                    uid = auth.currentUser.uid;
+                    await updatePassword(auth.currentUser, password); // อัปเดตรหัสผ่านให้บัญชีโซเชียล
+                } else {
+                    // หากไม่ได้ผูกโซเชียล ก็สมัครแบบอีเมลปกติ
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    uid = userCredential.user.uid;
+                }
                 
-                await setDoc(doc(db, "users", user.uid), {
+                // บันทึกข้อมูลลงฐานข้อมูล
+                await setDoc(doc(db, "users", uid), {
                     fullName: fullName, email: email, phone: phone, username: username,
-                    provider: "email", createdAt: new Date()
+                    provider: auth.currentUser ? "social_linked" : "email", 
+                    createdAt: new Date()
                 });
 
-                window.showPopup("สำเร็จ!", "สร้างบัญชีเรียบร้อยแล้ว", "success", () => {
+                window.showPopup("สำเร็จ!", "สร้างบัญชีเรียบร้อยแล้ว ท่านสามารถเข้าสู่ระบบได้เลย", "success", () => {
+                    auth.signOut(); // ออกจากระบบชั่วคราว เพื่อให้ผู้ใช้กลับไปล็อกอินที่หน้าหลัก
                     document.getElementById('registerForm').reset();
                     window.togglePage('loginPage');
                 });
@@ -408,7 +406,7 @@
                     window.location.href = 'dashboard.html';
                 });
             } catch (error) {
-                window.showPopup("ผิดพลาด", "ข้อมูลไม่ถูกต้อง", "error");
+                window.showPopup("ผิดพลาด", "อีเมลหรือรหัสผ่านไม่ถูกต้อง", "error");
             } finally {
                 btn.innerText = "เข้าสู่ระบบ";
                 btn.disabled = false;
