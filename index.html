@@ -30,6 +30,7 @@
         .rule-fail { color: #dc2626; }
         ::-webkit-scrollbar { display: none; }
         
+        /* Global Loader Animation */
         .loader {
             border: 4px solid #f3f3f3; border-top: 4px solid #0f172a;
             border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite;
@@ -200,10 +201,11 @@
         import { 
             getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
             signInWithRedirect, getRedirectResult, GoogleAuthProvider, OAuthProvider, updatePassword,
-            RecaptchaVerifier, signInWithPhoneNumber // Import คำสั่งระบุตัวตนด้วยโทรศัพท์เพิ่มจริง
+            RecaptchaVerifier, signInWithPhoneNumber
         } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+        // ================= FIREBASE CONFIG =================
         const firebaseConfig = {
             apiKey: "AIzaSyAzPmv7OVKbm2jBvBZKr16gRBjmplB9rEU",
             authDomain: "tappy-boking.firebaseapp.com",
@@ -261,9 +263,9 @@
             }, 200);
         };
 
-        // ================= UI STATE CONTROL =================
+        // ================= UI STATE NAV =================
         window.currentCaptcha = "";
-        window.confirmationResult = null; // สำหรับเก็บค่าจัดเตรียม SMS OTP ของ Firebase
+        window.confirmationResult = null;
         
         window.togglePage = (pageId) => {
             document.getElementById('loginPage').classList.add('hidden-section');
@@ -297,7 +299,6 @@
                 btnEmail.className = "w-1/2 pb-2 text-gray-400 text-center";
                 formPhone.classList.remove('hidden-section');
                 formEmail.classList.add('hidden-section');
-                // เริ่มต้นการทำงานระบบดักความปลอดภัยเมื่อแท็บโทรศัพท์เปิดออก
                 initRecaptcha();
             }
         }
@@ -307,45 +308,40 @@
             if (btn) {
                 btn.className = "flex-1 flex items-center justify-center bg-green-50 border border-green-500 text-green-600 py-2 rounded-lg text-sm font-bold shadow-sm cursor-not-allowed";
                 btn.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> ผูกบัญชีด้วย ${providerName} แล้ว`;
-                btn.removeAttribute('onclick');
+                btn.removeAttribute('onclick'); // ล็อกสถานะห้ามกดซ้ำตามเงื่อนไขข้อ 1
             }
         }
 
         // ================= PHONE LOGIN LOGIC (SMS OTP) =================
-        
-        // สร้างระบบตรวจบอท ReCAPTCHA เพื่อความปลอดภัยสูงสุด (Firebase บังคับ)
         function initRecaptcha() {
             if(!window.recaptchaVerifier) {
-                window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                window.recapt Verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
                     'size': 'normal',
-                    'callback': (response) => { console.log("reCAPTCHA Verified!"); }
+                    'callback': (response) => { console.log("reCAPTCHA ผ่านการตรวจสอบ"); }
                 });
                 window.recaptchaVerifier.render();
             }
         }
 
-        // ส่ง SMS OTP เข้าเบอร์จริงตอนล็อกอิน
         window.handlePhoneLoginSendSMS = async () => {
             const rawPhone = document.getElementById('loginPhoneInput').value;
             if(!rawPhone || rawPhone.length !== 10) return window.showPopup("ผิดพลาด", "กรุณากรอกเบอร์โทรศัพท์ 10 หลักที่ถูกต้อง", "error");
             
-            // แปลงรูปแบบเบอร์โทรเป็นสากลตามข้อกำหนด Firebase (+66 แทนเลข 0 ตัวแรก)
             const formattedPhone = "+66" + rawPhone.substring(1);
             const btn = document.getElementById('btnSendLoginSMS');
-            
             btn.innerText = "กำลังส่ง...";
             btn.disabled = true;
 
             try {
-                // 1. ตรวจสอบก่อนว่าเบอร์นี้เคยสมัครสมาชิกในระบบฐานข้อมูลจริง (Firestore) หรือยัง
+                // [เงื่อนไขข้อ 2] ค้นหาความมีอยู่ของเบอร์โทรศัพท์ในฐานข้อมูลสมาชิกจริง (Firestore)
                 const q = query(collection(db, "users"), where("phone", "==", rawPhone));
                 const querySnapshot = await getDocs(q);
 
                 if (querySnapshot.empty) {
-                    // [เข้าเงื่อนไขข้อ 2] เบอร์นี้ไม่เคยลงทะเบียนสมาชิก -> แจ้งเตือนและพาไปหน้าสมัคร
                     btn.innerText = "รับ SMS OTP";
                     btn.disabled = false;
                     
+                    // [ดักเงื่อนไขข้อ 2] หากไม่พบบัญชี ขึ้นป๊อปอัปแจ้งเตือนและมีปุ่มพาไปหน้าสมัคร
                     return window.showPopup(
                         "ไม่พบบัญชี", 
                         "ไม่พบบัญชีที่ผูกกับเบอร์โทรศัพท์นี้ สร้างบัญชีเลยเพื่อเริ่มต้นใช้งาน", 
@@ -353,50 +349,47 @@
                         "สร้างบัญชีเลย", 
                         () => {
                             window.togglePage('registerPage');
-                            document.getElementById('regPhone').value = rawPhone; // ดึงไปกรอกให้ล่วงหน้า
+                            document.getElementById('regPhone').value = rawPhone; // ดึงค่าเบอร์ไปวางให้
                         }
                     );
                 }
 
-                // 2. หากเบอร์มีในระบบจริง ส่ง SMS OTP ของจริงทันที
+                // หากมีบัญชีอยู่จริง ทำงานส่งข้อความ SMS OTP จริง
                 window.confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, window.recaptchaVerifier);
                 document.getElementById('loginOtpSection').classList.remove('hidden-section');
-                window.showPopup("ส่งรหัสสำเร็จ", "ระบบได้ส่งรหัส OTP ไปที่เบอร์มือถือของคุณเรียบร้อยแล้ว กรุณากรอกรหัสภายในช่วงเวลาที่กำหนด", "success");
+                window.showPopup("ส่งรหัสสำเร็จ", "ระบบได้ส่งรหัส OTP ไปยังหมายเลขของท่านแล้ว", "success");
                 btn.innerText = "ส่งอีกครั้ง";
                 btn.disabled = false;
             } catch (error) {
-                console.error("SMS Send Error:", error);
-                window.showPopup("ข้อผิดพลาด", "ไม่สามารถส่ง SMS ได้ กรุณาตรวจสอบเบอร์โทรศัพท์อีกครั้ง", "error");
+                console.error(error);
+                window.showPopup("ข้อผิดพลาด", "ไม่สามารถจัดส่งข้อความ SMS ได้ กรุณาลองใหม่อีกครั้ง", "error");
                 btn.innerText = "รับ SMS OTP";
                 btn.disabled = false;
             }
         }
 
-        // ยืนยันรหัส SMS OTP เพื่อล็อกอินเข้า Dashboard (ข้อ 3)
         window.handlePhoneLoginVerify = async (e) => {
             e.preventDefault();
             const code = document.getElementById('loginOtpInput').value;
             const btn = document.getElementById('btnVerifyPhoneLogin');
             
-            if(!window.confirmationResult) return window.showPopup("ผิดพลาด", "ไม่พบข้อมูลการขอรหัส OTP", "error");
+            if(!window.confirmationResult) return window.showPopup("ผิดพลาด", "ไม่พบข้อมูลรหัส OTP", "error");
             
-            btn.innerText = "กำลังตรวจสอบสิทธิ์...";
+            btn.innerText = "กำลังยืนยัน...";
             btn.disabled = true;
 
             try {
-                // ยืนยันรหัส OTP กับ Firebase Server
                 await window.confirmationResult.confirm(code);
-                // [ตรงเงื่อนไขข้อ 3] มีบัญชีอยู่แล้ว ทะลุเข้าหน้าแดชบอร์ดทันที
+                // [เงื่อนไขข้อ 3] ล็อกอินผ่านฉลุย -> วิ่งผ่านหน้าโหลดหมุนตรงเข้าแดชบอร์ด
                 window.location.href = 'dashboard.html';
             } catch (error) {
-                window.showPopup("ผิดพลาด", "รหัส OTP ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง", "error");
+                window.showPopup("ผิดพลาด", "รหัส OTP ของท่านไม่ถูกต้อง", "error");
                 btn.innerText = "ยืนยันรหัส OTP เพื่อเข้าสู่ระบบ";
                 btn.disabled = false;
             }
         }
 
-        // ================= SMART ROUTING AFTER SOCIAL REDIRECT =================
-        
+        // ================= SMART ROUTING AND SOCIAL REDIRECT RESULT =================
         getRedirectResult(auth).then(async (result) => {
             if (result !== null) {
                 const user = result.user;
@@ -404,13 +397,13 @@
                 const actionOrigin = sessionStorage.getItem('auth_action_origin');
 
                 if (userSnap.exists()) {
-                    // [เงื่อนไขข้อ 3] ลูกค้าเก่าล็อกอินผ่านโซเชียล -> วิ่งผ่านหน้าตัวหมุนตรงเข้าหน้าแดชบอร์ดเลย
+                    // [เงื่อนไขข้อ 3] บัญชีเก่าประวัติชัดเจน -> ค้างหน้าตัวหมุนประมวลผลแล้วสไลด์เข้าสู่แดชบอร์ดเลย
                     window.location.href = 'dashboard.html';
                 } else {
                     window.hideLoader();
 
                     if (actionOrigin === 'register_page') {
-                        // [เงื่อนไขข้อ 1] เกิดจากการกดผูกบัญชีในหน้าสร้างบัญชีใหม่
+                        // [เงื่อนไขข้อ 1] ผูกจากหน้าสมัครสมาชิก -> กลับมาหน้าเดิม ฟอร์มเดิม และล็อกปุ่มเป็น "ผูกแล้ว"
                         window.togglePage('registerPage');
                         
                         if(user.email) document.getElementById('emailInput').value = user.email;
@@ -420,9 +413,9 @@
                         if (pId === 'google.com') updateLinkButtonStatus('Google');
                         if (pId === 'oidc.line') updateLinkButtonStatus('LINE');
                         
-                        window.showPopup("ผูกบัญชีสำเร็จ", "ผูกระบบโซเชียลเรียบร้อย กรุณากรอกข้อมูลส่วนอื่นให้ครบถ้วนและกดยืนยันการสมัครสมาชิกด้านล่างครับ", "success");
+                        window.showPopup("ผูกบัญชีสำเร็จ", "ผูกระบบโซเชียลเรียบร้อย กรุณากรอกข้อมูลส่วนอื่นให้ครบถ้วนและกดปุ่มยืนยันการสมัครสมาชิกด้านล่างครับ", "success");
                     } else {
-                        // [เงื่อนไขข้อ 2] ลูกค้าใหม่กดปุ่มโซเชียลจากหน้าแรกเลย -> ขึ้นเตือนแจ้งไม่พบบัญชี พร้อมปุ่มสร้างบัญชี
+                        // [เงื่อนไขข้อ 2] ลูกค้าใหม่กดปุ่มโซเชียลจากหน้าแรกเลย -> เด้งหน้าต่างเตือนและพาไปสร้างบัญชี
                         window.showPopup(
                             "ไม่พบบัญชี", 
                             "ไม่พบบัญชีที่ผูกกับโซเชียลนี้ สร้างบัญชีเลยเพื่อเริ่มต้นใช้งาน", 
@@ -444,9 +437,9 @@
                 window.hideLoader();
             }
         }).catch((error) => {
-            console.error("Auth Error:", error);
+            console.error(error);
             window.hideLoader();
-            window.showPopup("ข้อผิดพลาด", "การตรวจสอบสิทธิ์ล้มเหลว กรุณาลองใหม่", "error");
+            window.showPopup("ข้อผิดพลาด", "การยืนยันสิทธิ์ล้มเหลว", "error");
         });
 
         window.handleSocialAuth = (providerName) => {
@@ -461,7 +454,7 @@
             signInWithRedirect(auth, provider);
         }
 
-        // ================= FORM SUBMISSION LOGIC =================
+        // ================= FORM REGISTER SUBMISSION =================
         window.handleRegister = async (e) => {
             e.preventDefault();
             
@@ -480,7 +473,7 @@
             const username = document.getElementById('regUsername').value;
             const btn = document.getElementById('btnRegister');
             
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังสร้างบัญชี...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังสมัครสมาชิก...';
             btn.disabled = true;
 
             try {
@@ -495,15 +488,23 @@
                 
                 await setDoc(doc(db, "users", uid), {
                     fullName: fullName, email: email, phone: phone, username: username,
-                    provider: auth.currentUser ? "social" : "email", 
+                    provider: auth.currentUser ? "social_linked" : "email", 
                     createdAt: new Date()
                 });
 
-                window.showPopup("สมัครสมาชิกสำเร็จ!", "ระบบบันทึกบัญชีที่ผูกเรียบร้อยแล้ว กำลังนำท่านเข้าสู่แดชบอร์ด", "success", "ตกลง", () => {
+                // [เข้า Logic ข้อ 1] บังคับให้สมัครเสร็จสิ้นก่อน ครั้งหน้าถึงกดโซเชียลเข้าได้ตรงๆ
+                window.showPopup("สมัครสมาชิกสำเร็จ!", "ระบบบันทึกตารางผูกบัญชีของท่านเรียบร้อยแล้ว กำลังนำพาท่านเข้าสู่หน้าแดชบอร์ด", "success", "ตกลง", () => {
                     window.location.href = 'dashboard.html';
                 });
             } catch (error) {
-                window.showPopup("สมัครสมาชิกไม่สำเร็จ", error.message, "error");
+                console.error(error);
+                if (error.code === 'auth/email-already-in-use') {
+                    window.showPopup("อีเมลนี้ถูกใช้งานแล้ว", "อีเมลนี้มีบัญชีในระบบแล้ว ระบบจะพาท่านกลับหน้าเข้าสู่ระบบ", "error", "ตกลง", () => {
+                        window.togglePage('loginPage');
+                    });
+                } else {
+                    window.showPopup("สมัครสมาชิกไม่สำเร็จ", "เนื่องจากข้อผิดพลาด: " + error.message, "error");
+                }
                 btn.innerText = "ยืนยันการสมัครสมาชิก";
                 btn.disabled = false;
             }
@@ -522,18 +523,18 @@
                 await signInWithEmailAndPassword(auth, email, password);
                 window.location.href = 'dashboard.html';
             } catch (error) {
-                window.showPopup("ผิดพลาด", "อีเมลหรือรหัสผ่านไม่ถูกต้อง", "error");
+                window.showPopup("ผิดพลาด", "อีเมลหรือรหัสผ่านของท่านไม่ถูกต้อง", "error");
                 btn.innerText = "เข้าสู่ระบบ";
                 btn.disabled = false;
             }
         }
 
-        // ================= UTILITIES =================
+        // ================= COGNITIVE AND VALIDATION UTILITIES =================
         window.requestOTP = () => {
             const email = document.getElementById('emailInput').value;
             if(!email) return window.showPopup("ผิดพลาด", "กรุณากรอกอีเมลก่อนรับรหัส", "error");
             document.getElementById('otpSection').classList.remove('hidden');
-            window.showPopup("สำเร็จ", "ระบบได้จำลองการส่งรหัส OTP ไปที่อีเมลของคุณแล้ว", "success");
+            window.showPopup("สำเร็จ", "ระบบได้ทำการจำลองการจัดส่งรหัส OTP ไปที่อีเมลของท่านแล้ว", "success");
         }
 
         window.validatePassword = () => {
