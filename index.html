@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAPPY | ระบบสมาชิกและจองคิว</title>
     
-    <!-- Google Font: Sarabun -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script>
@@ -33,33 +30,30 @@
         .rule-fail { color: #dc2626; }
         ::-webkit-scrollbar { display: none; }
         
-        /* Loading Screen Animation */
+        /* หน้า Loading ตัวหมุนตามเงื่อนไขข้อ 3 */
         .loader {
             border: 4px solid #f3f3f3; border-top: 4px solid #0f172a;
-            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
+            border-radius: 50%; width: 44px; height: 44px; animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4 relative">
 
-    <!-- ==================== GLOBAL LOADING SCREEN ==================== -->
     <div id="globalLoader" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center transition-opacity duration-300">
         <div class="loader mb-4"></div>
-        <p class="text-primary font-semibold text-lg tracking-wide">กำลังตรวจสอบข้อมูล...</p>
+        <p class="text-primary font-semibold text-lg tracking-wide">กำลังตรวจสอบสิทธิ์...</p>
     </div>
 
-    <!-- ==================== CUSTOM POPUP MODAL ==================== -->
     <div id="customPopup" class="fixed inset-0 flex items-center justify-center z-50 hidden bg-black bg-opacity-50 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-[320px] w-full mx-4 transform transition-all scale-95 opacity-0 text-center" id="popupContent">
             <div id="popupIcon" class="mb-3 text-5xl"></div>
             <h3 id="popupTitle" class="text-xl font-bold mb-2"></h3>
-            <p id="popupMessage" class="text-gray-600 mb-6 text-sm"></p>
-            <button onclick="window.closePopup()" class="w-full bg-primary text-white py-2.5 rounded-xl hover:bg-gray-800 transition font-medium shadow-md">ตกลง</button>
+            <p id="popupMessage" class="text-gray-600 mb-6 text-sm leading-relaxed"></p>
+            <button onclick="window.closePopup()" id="popupBtn" class="w-full bg-primary text-white py-2.5 rounded-xl hover:bg-gray-800 transition font-bold shadow-md tracking-wide text-sm">ตกลง</button>
         </div>
     </div>
 
-    <!-- ==================== MAIN CONTAINER ==================== -->
     <div class="w-full max-w-[420px] glass-card rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden my-4 hidden" id="mainContainer">
         
         <div class="pt-10 pb-4 flex flex-col items-center">
@@ -68,7 +62,6 @@
             <p class="text-gray-500 text-sm">กรุณาเข้าสู่ระบบเพื่อดำเนินการ</p>
         </div>
 
-        <!-- ==================== LOGIN SECTION ==================== -->
         <div id="loginPage" class="px-8 pb-10">
             <form id="loginForm" onsubmit="window.handleLogin(event)" class="space-y-4">
                 <div>
@@ -98,7 +91,6 @@
             </p>
         </div>
 
-        <!-- ==================== REGISTER SECTION ==================== -->
         <div id="registerPage" class="hidden-section px-8 pb-10">
             <hr class="mb-6 border-gray-200">
             <h2 class="text-lg font-bold text-center mb-4 text-primary">สร้างบัญชีใหม่</h2>
@@ -106,7 +98,7 @@
             <form id="registerForm" onsubmit="window.handleRegister(event)" class="space-y-4">
                 
                 <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 mb-6">
-                    <label class="block text-primary mb-2 text-sm font-bold text-center">ทางลัด: ผูกบัญชีโซเชียลเพื่อสมัครไวขึ้น</label>
+                    <label class="block text-primary mb-2 text-sm font-bold text-center">ผูกบัญชีโซเชียลเพื่อสมัครสมาชิก</label>
                     <div class="flex space-x-2">
                         <button type="button" id="btnLinkGoogle" onclick="window.linkSocialAuth('google')" class="flex-1 flex items-center justify-center border border-gray-300 bg-white py-2 rounded-lg hover:bg-gray-50 transition text-gray-600 shadow-sm text-sm font-semibold">
                             <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-4 w-4 mr-2"> ผูก Google
@@ -159,7 +151,7 @@
                 <div>
                     <label class="block text-gray-500 mb-1 text-xs ml-1 font-semibold">รหัสความปลอดภัย</label>
                     <div class="flex items-center space-x-2 mb-2">
-                        <div id="captchaBox" class="bg-gray-100 border border-gray-200 font-mono text-xl tracking-[0.2em] px-3 py-2 rounded-xl font-bold text-gray-600 select-none w-32 text-center"></div>
+                        <div id="captchaBox" class="bg-gray-100 border border-gray-300 font-mono text-xl tracking-[0.2em] px-3 py-2 rounded-xl font-bold text-gray-600 select-none w-32 text-center"></div>
                         <button type="button" onclick="window.generateCaptcha()" class="p-2.5 text-gray-400 hover:text-primary transition bg-gray-50 border border-gray-200 rounded-xl"><i class="fa-solid fa-rotate-right"></i></button>
                         <button type="button" onclick="window.speakCaptcha()" class="p-2.5 text-gray-400 hover:text-primary transition bg-gray-50 border border-gray-200 rounded-xl"><i class="fa-solid fa-volume-high"></i></button>
                     </div>
@@ -184,7 +176,6 @@
         </div>
     </div>
 
-    <!-- FIREBASE & LOGIC SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { 
@@ -206,18 +197,20 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // ================= UI CONTROL & POPUP =================
+        // ================= CUSTOM POPUP CONTROL =================
         let popupCallback = null;
-        window.showPopup = (title, message, type = 'info', callback = null) => {
+        window.showPopup = (title, message, type = 'info', btnText = 'ตกลง', callback = null) => {
             const popup = document.getElementById('customPopup');
             const content = document.getElementById('popupContent');
             const icon = document.getElementById('popupIcon');
             const titleEl = document.getElementById('popupTitle');
             const msgEl = document.getElementById('popupMessage');
+            const btn = document.getElementById('popupBtn');
             
             popupCallback = callback;
             titleEl.innerText = title;
             msgEl.innerText = message;
+            btn.innerText = btnText;
 
             if (type === 'success') {
                 icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>';
@@ -248,8 +241,8 @@
             }, 200);
         };
 
+        // ================= UI STATE NAVIGATION =================
         window.currentCaptcha = "";
-        
         window.togglePage = (pageId) => {
             document.getElementById('loginPage').classList.add('hidden-section');
             document.getElementById('registerPage').classList.add('hidden-section');
@@ -266,59 +259,89 @@
             }, 300);
         }
 
-        // ================= SMART ROUTING (THE MAGIC PART) =================
+        // Helper ฟังก์ชันเปลี่ยนปุ่มผูกบัญชีเป็นสถานะผูกแล้ว (ข้อ 1)
+        function updateLinkButtonStatus(providerName) {
+            const btn = document.getElementById(providerName === 'Google' ? 'btnLinkGoogle' : 'btnLinkLine');
+            if (btn) {
+                btn.className = "flex-1 flex items-center justify-center bg-green-50 border border-green-500 text-green-600 py-2 rounded-lg text-sm font-bold shadow-sm cursor-not-allowed";
+                btn.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> ผูกบัญชีด้วย ${providerName} แล้ว`;
+                btn.removeAttribute('onclick'); // ป้องกันการกดซ้ำ
+            }
+        }
+
+        // ================= SMART AUTH CORE LOGIC =================
+        
         getRedirectResult(auth).then(async (result) => {
             if (result !== null) {
-                // มีการเด้งกลับมาจากการล็อกอินโซเชียล
                 const user = result.user;
                 const userSnap = await getDoc(doc(db, "users", user.uid));
-                
-                if (!userSnap.exists()) {
-                    // ผู้ใช้ใหม่! ไม่เคยมีข้อมูลในระบบ -> บังคับพาไปหน้าสมัครสมาชิกและกรอกข้อมูลให้
-                    window.togglePage('registerPage');
-                    
-                    if(user.email) document.getElementById('emailInput').value = user.email;
-                    if(user.displayName) document.getElementById('regName').value = user.displayName;
-                    
-                    // ปรับหน้าตาปุ่มให้รู้ว่าเชื่อมแล้ว
-                    const providerId = result.providerId; 
-                    if (providerId === 'google.com') {
-                        const btn = document.getElementById('btnLinkGoogle');
-                        btn.className = "flex-1 flex items-center justify-center bg-green-50 border border-green-500 text-green-600 py-2 rounded-lg text-sm font-bold shadow-sm cursor-not-allowed";
-                        btn.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> ผูก Google แล้ว';
-                    } else if (providerId === 'oidc.line') {
-                        const btn = document.getElementById('btnLinkLine');
-                        btn.className = "flex-1 flex items-center justify-center bg-green-50 border border-green-500 text-green-600 py-2 rounded-lg text-sm font-bold shadow-sm cursor-not-allowed";
-                        btn.innerHTML = '<i class="fa-solid fa-circle-check mr-2"></i> ผูก LINE แล้ว';
-                    }
-                    
-                    window.hideLoader();
-                    window.showPopup("ยินดีต้อนรับสมาชิกใหม่!", "ระบบพบว่าคุณเข้าใช้งานเป็นครั้งแรก กรุณาตั้งรหัสผ่านและกรอกข้อมูลที่เหลือ เพื่อทำการสมัครสมาชิกให้เสร็จสิ้นครับ", "info");
-                } else {
-                    // ลูกค้าเก่า! พาเข้าหน้า Dashboard ทันที
+                const actionOrigin = sessionStorage.getItem('auth_action_origin');
+
+                if (userSnap.exists()) {
+                    // [เงื่อนไขข้อ 3] มีบัญชีอยู่แล้ว -> ค้างหน้าจอโหลดหมุน (Global Loader) และพุ่งเข้า Dashboard เลย
                     window.location.href = 'dashboard.html';
+                } else {
+                    // ยังไม่มีฐานข้อมูลสมาชิกในระบบ (ลูกค้าใหม่)
+                    window.hideLoader();
+
+                    if (actionOrigin === 'register_page') {
+                        // [เงื่อนไขข้อ 1] เกิดจากการกดผูกบัญชีในหน้าสมัครสมาชิก -> พากลับหน้าเดิมและปรับปุ่มเป็น "ผูกแล้ว"
+                        window.togglePage('registerPage');
+                        
+                        if(user.email) document.getElementById('emailInput').value = user.email;
+                        if(user.displayName) document.getElementById('regName').value = user.displayName;
+                        
+                        const pId = result.providerId;
+                        if (pId === 'google.com') updateLinkButtonStatus('Google');
+                        if (pId === 'oidc.line') updateLinkButtonStatus('LINE');
+                        
+                        window.showPopup("ผูกบัญชีสำเร็จ", "ผูกระบบโซเชียลเรียบร้อย กรุณากรอกข้อมูลส่วนอื่นให้ครบถ้วนและกดยืนยันการสมัครสมาชิกด้านล่างครับ", "success");
+                    } else {
+                        // [เงื่อนไขข้อ 2] ลูกค้าใหม่กดปุ่มโซเชียลจากหน้าแรกเลย -> ขึ้นเตือนแจ้งไม่พบบัญชี พร้อมปุ่มสร้างบัญชี
+                        window.showPopup(
+                            "ไม่พบบัญชี", 
+                            "ไม่พบบัญชีที่ผูกกับโซเชียลนี้ สร้างบัญชีเลยเพื่อเริ่มต้นใช้งาน", 
+                            "error", 
+                            "สร้างบัญชีเลย", 
+                            () => {
+                                window.togglePage('registerPage');
+                                // อำนวยความสะดวก: ดึงข้อมูลและปรับสถานะผูกให้ทันทีตามกลไกข้อ 1
+                                if(user.email) document.getElementById('emailInput').value = user.email;
+                                if(user.displayName) document.getElementById('regName').value = user.displayName;
+                                
+                                const pId = result.providerId;
+                                if (pId === 'google.com') updateLinkButtonStatus('Google');
+                                if (pId === 'oidc.line') updateLinkButtonStatus('LINE');
+                            }
+                        );
+                    }
                 }
             } else {
-                // เปิดเว็บปกติ ไม่มี Redirect เกิดขึ้น
+                // เปิดเว็บหน้าปกติ ไม่ได้มาจากการ Redirect
                 window.hideLoader();
             }
         }).catch((error) => {
             console.error("Auth Error:", error);
             window.hideLoader();
-            window.showPopup("ข้อผิดพลาด", "การเชื่อมต่อบัญชีล้มเหลว กรุณาลองใหม่อีกครั้ง", "error");
+            window.showPopup("ข้อผิดพลาด", "การเชื่อมต่อสิทธิ์ล้มเหลว กรุณาลองอีกครั้ง", "error");
         });
 
-        // ================= AUTHENTICATION FUNCTIONS =================
+        // ฟังก์ชันเข้าใช้งานด้วย Social จากหน้าแรก (ทางเข้าล็อกอินปกติ)
         window.handleSocialAuth = (providerName) => {
+            sessionStorage.setItem('auth_action_origin', 'login_page');
             let provider = providerName === 'google' ? new GoogleAuthProvider() : new OAuthProvider('oidc.line');
             signInWithRedirect(auth, provider);
         }
 
+        // ฟังก์ชันผูกบัญชีโซเชียลจากหน้าสร้างบัญชีใหม่ (ข้อ 1)
         window.linkSocialAuth = (providerName) => {
+            sessionStorage.setItem('auth_action_origin', 'register_page');
             let provider = providerName === 'google' ? new GoogleAuthProvider() : new OAuthProvider('oidc.line');
             signInWithRedirect(auth, provider);
         }
 
+        // ================= FORM SUBMISSION LOGIC =================
+        
         window.handleRegister = async (e) => {
             e.preventDefault();
             
@@ -327,7 +350,7 @@
                 window.generateCaptcha();
                 return window.showPopup("ผิดพลาด", "รหัสความปลอดภัยไม่ถูกต้อง", "error");
             }
-            if(document.querySelectorAll('.rule-fail').length > 0) return window.showPopup("ผิดพลาด", "รหัสผ่านยังไม่ตรงเงื่อนไข", "error");
+            if(document.querySelectorAll('.rule-fail').length > 0) return window.showPopup("ผิดพลาด", "รหัสผ่านยังไม่ตรงเงื่อนไขความปลอดภัย", "error");
             if(document.getElementById('regPassword').value !== document.getElementById('regConfirmPassword').value) return window.showPopup("ผิดพลาด", "รหัสผ่านไม่ตรงกัน", "error");
 
             const email = document.getElementById('emailInput').value;
@@ -337,33 +360,35 @@
             const username = document.getElementById('regUsername').value;
             const btn = document.getElementById('btnRegister');
             
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังสร้างบัญชี...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังบันทึกข้อมูลสมาชิก...';
             btn.disabled = true;
 
             try {
                 let uid = "";
-                // ตรวจสอบว่ามีการผูกโซเชียลค้างไว้หรือไม่
+                // ตรวจสอบว่าผู้ใช้ผ่านกระบวนการยืนยันโซเชียลค้างไว้อยู่ใน Session หรือไม่
                 if (auth.currentUser) {
                     uid = auth.currentUser.uid;
-                    // อัปเดตรหัสผ่านให้บัญชีโซเชียล เพื่อให้ล็อกอินด้วยอีเมลได้ในอนาคต
+                    // กำหนดรหัสผ่านเสริมให้บัญชีโซเชียล เพื่อให้สามารถล็อกอินด้วยอีเมลได้เช่นกัน
                     await updatePassword(auth.currentUser, password);
                 } else {
+                    // หากไม่ได้ผูกโซเชียลมาเลย ให้สมัครแบบ Email/Password ดั้งเดิม
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     uid = userCredential.user.uid;
                 }
                 
+                // บันทึกโปรไฟล์ลง Firestore Database
                 await setDoc(doc(db, "users", uid), {
                     fullName: fullName, email: email, phone: phone, username: username,
-                    provider: auth.currentUser ? "social" : "email", 
+                    provider: auth.currentUser ? "social_linked" : "email", 
                     createdAt: new Date()
                 });
 
-                window.showPopup("สำเร็จ!", "สร้างบัญชีเรียบร้อยแล้ว กำลังพาท่านเข้าสู่ระบบ...", "success", () => {
-                    // ไม่ต้องให้ล็อกอินซ้ำ พาเข้า Dashboard ทันที!
+                // เมื่อลงทะเบียนเสร็จสมบูรณ์ พาทะลุเข้าหน้า Dashboard ทันทีตามเจตนารมณ์ระบบแอปพลิเคชันจริง
+                window.showPopup("สมัครสมาชิกสำเร็จ!", "ระบบบันทึกบัญชีที่ผูกเรียบร้อยแล้ว กำลังนำท่านเข้าสู่แดชบอร์ด", "success", "ตกลง", () => {
                     window.location.href = 'dashboard.html';
                 });
             } catch (error) {
-                window.showPopup("ล้มเหลว", error.message, "error");
+                window.showPopup("สมัครสมาชิกไม่สำเร็จ", error.message, "error");
                 btn.innerText = "ยืนยันการสมัครสมาชิก";
                 btn.disabled = false;
             }
@@ -380,7 +405,7 @@
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                window.location.href = 'dashboard.html'; // พาเข้าเงียบๆ ให้ดูโปร
+                window.location.href = 'dashboard.html';
             } catch (error) {
                 window.showPopup("ผิดพลาด", "อีเมลหรือรหัสผ่านไม่ถูกต้อง", "error");
                 btn.innerText = "เข้าสู่ระบบ";
@@ -388,12 +413,12 @@
             }
         }
 
-        // ================= UTILITIES =================
+        // ================= UTILITY OPERATIONS =================
         window.requestOTP = () => {
             const email = document.getElementById('emailInput').value;
-            if(!email) return window.showPopup("ผิดพลาด", "กรุณากรอกอีเมลก่อน", "error");
+            if(!email) return window.showPopup("ผิดพลาด", "กรุณากรอกอีเมลก่อนรับรหัส", "error");
             document.getElementById('otpSection').classList.remove('hidden');
-            window.showPopup("สำเร็จ", "ส่งรหัส OTP เรียบร้อยแล้ว (จำลอง)", "success");
+            window.showPopup("สำเร็จ", "ระบบได้จำลองการส่งรหัส OTP ไปที่อีเมลของคุณแล้ว", "success");
         }
 
         window.validatePassword = () => {
